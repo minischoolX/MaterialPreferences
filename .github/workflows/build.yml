@@ -1,0 +1,38 @@
+name: Build
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - master
+
+jobs:
+
+  android_Build:
+    name: Android App Building
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      - name: Gradle cache
+        uses: gradle/gradle-build-action@v2
+
+      - name: Run Build
+        run: |
+          chmod +x gradlew
+          ./gradlew demo:assembleDebug
+
+      - name: Upload Apk
+        uses: actions/upload-artifact@v2
+        with:
+          name: DebugApp
+          path: demo/build/outputs/apk/debug/
